@@ -14,11 +14,11 @@ while True:
     query=input("Tenzin(User): ")
     if query.lower()=='exit':
         break
-    humanmessage=HumanMessage(content=query)
-    chathistory.append(humanmessage)
-    res=model.invoke(chathistory)
-    response=res.content
-    chathistory.append(AIMessage(content=response))
+    humanmessage=HumanMessage(content=query)# we take the humanmessage as the input taken
+    chathistory.append(humanmessage)#append it in the chathistory
+    res=model.invoke(chathistory) #invoke all history
+    response=res.content # the res by ai
+    chathistory.append(AIMessage(content=response)) # assign the response to the chathistory
     print(f'AI: {response}')
 
 print('--message-history--')
