@@ -3,7 +3,7 @@
 name = "langchain-crash-course"
 version = "0.1.0"
 description = "Everything you need to know to get started with LangChain"
-authors = ["bhancock_ai <brandon@brandonhancock.io>"]
+authors = ["Tenzin Delek"]
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.12"
