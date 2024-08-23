@@ -3,11 +3,11 @@ import os
 from dotenv import load_dotenv
 from langchain_community.vectorstores import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings,ChatGoogleGenerativeAI
-from langchain_core.messages import HumanMessage,SystemMessage,AIMessage
+from langchain_core.messages import HumanMessage,SystemMessage
 load_dotenv()
 # Define the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
-persistent_directory = os.path.join(current_dir, "db", "chroma_db_with_metadata")
+persistent_directory = os.path.join(current_dir, "db", "langchaindemo")
 
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 

@@ -7,8 +7,8 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 # Define the directory containing the text file and the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(current_dir, "books", "odyssey.txt")
-persistent_directory = os.path.join(current_dir, "db", "chroma_db")
+file_path = os.path.join(current_dir, "books", "langchain_demo.txt")
+persistent_directory = os.path.join(current_dir, "db", "langchaindemo")
 
 # Check if the Chroma vector store already exists
 if not os.path.exists(persistent_directory):
