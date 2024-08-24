@@ -1,2 +1,4 @@
 .env
 db
+client_secrets.json
+token.json
