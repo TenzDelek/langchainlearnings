@@ -12,14 +12,11 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_google_community import GoogleDriveLoader
 from googleapiclient.http import MediaIoBaseDownload
-from langchain_community.document_loaders import TextLoader
 from langchain.schema import Document
-# Load environment variables from .env
+
 load_dotenv()
 
-# Google Drive API setup
 SCOPES = [
     'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/drive.file'
@@ -45,14 +42,13 @@ def authenticate_google_drive():
     
     return creds
 
-# Authenticate and build the Drive service
+
 creds = authenticate_google_drive()
 drive_service = build('drive', 'v3', credentials=creds)
 
-# Define the folder ID
 folder_id = "1zhIAffPLuTaGX7XWkwlUzEtncI4ngek6"
 
-# List files in the folder
+
 results = drive_service.files().list(
     q=f"'{folder_id}' in parents",
     fields="files(id, name)"
@@ -60,7 +56,6 @@ results = drive_service.files().list(
 
 files = results.get('files', [])
 
-# Print file list and ask for selection
 print("Select a file:")
 for i, file in enumerate(files):
     print(f"{i+1}. {file.get('name')}")
@@ -68,7 +63,6 @@ for i, file in enumerate(files):
 file_index = int(input("Enter the file number: ")) - 1
 selected_file = files[file_index]
 
-# Define the file ID
 file_id = selected_file.get('id')
 print(file_id)
 
@@ -82,15 +76,13 @@ def download_file(file_id, service):
     return fh.getvalue().decode('utf-8')
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-persistent_directory = os.path.join(current_dir, "db", "dtrydb")
+persistent_directory = os.path.join(current_dir, "db", "first")
 
 if not os.path.exists(persistent_directory):
     print("Persistent directory does not exist. Initializing vector store...")
     try:
-        # Download the file content
         file_content = download_file(file_id, drive_service)
         
-        # Create a Document object
         document = Document(page_content=file_content, metadata={"source": f"google_drive:{file_id}"})
         
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -121,13 +113,11 @@ else:
             embedding_function=embeddings)
     print("Vector store already exists. No need to initialize.")
 
-# Create a retriever for querying the vector store
 retriever = db.as_retriever(
     search_type="similarity",
     search_kwargs={"k": 3},
 )
 
-# Create a ChatGoogleGenerativeAI model
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
 
 # Contextualize question prompt
@@ -175,7 +165,6 @@ qa_prompt = ChatPromptTemplate.from_messages(
 question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
-# Test the question answering chain
 def continual_chat():
     print("Start chatting with the AI! Type 'exit' to end the conversation.")
     chat_history = []
@@ -188,6 +177,5 @@ def continual_chat():
         chat_history.append(HumanMessage(content=query))
         chat_history.append(AIMessage(content=result["answer"]))
 
-# Main function to start the continual chat
 if __name__ == "__main__":
     continual_chat()
