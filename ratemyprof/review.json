@@ -1,0 +1,122 @@
+[
+  {
+    "professor": "John Doe",
+    "subject": "Computer Science",
+    "stars": 5,
+    "review": "Amazing instructor! Explains complex concepts clearly."
+  },
+  {
+    "professor": "Jane Smith",
+    "subject": "Mathematics",
+    "stars": 4,
+    "review": "Great teacher, but assignments can be tough."
+  },
+  {
+    "professor": "Bob Johnson",
+    "subject": "Biology",
+    "stars": 5,
+    "review": "Very knowledgeable and helpful."
+  },
+  {
+    "professor": "Alice Brown",
+    "subject": "English",
+    "stars": 4,
+    "review": "Good teacher, but lectures can be dry."
+  },
+  {
+    "professor": "Mike Davis",
+    "subject": "Physics",
+    "stars": 5,
+    "review": "Excellent instructor! Makes complex concepts easy to understand."
+  },
+  {
+    "professor": "Emma Taylor",
+    "subject": "Chemistry",
+    "stars": 4,
+    "review": "Good teacher, but lab sessions can be disorganized."
+  },
+  {
+    "professor": "David Lee",
+    "subject": "History",
+    "stars": 5,
+    "review": "Very engaging and knowledgeable instructor."
+  },
+  {
+    "professor": "Sophia Patel",
+    "subject": "Psychology",
+    "stars": 4,
+    "review": "Good teacher, but readings can be overwhelming."
+  },
+  {
+    "professor": "Oliver Martin",
+    "subject": "Economics",
+    "stars": 5,
+    "review": "Excellent instructor! Makes complex concepts easy to understand."
+  },
+  {
+    "professor": "Ava Chen",
+    "subject": "Sociology",
+    "stars": 4,
+    "review": "Good teacher, but lectures can be boring."
+  },
+  {
+    "professor": "Liam Kim",
+    "subject": "Philosophy",
+    "stars": 5,
+    "review": "Very thought-provoking and engaging instructor."
+  },
+  {
+    "professor": "Noah White",
+    "subject": "Geography",
+    "stars": 4,
+    "review": "Good teacher, but assignments can be unclear."
+  },
+  {
+    "professor": "Elijah Hall",
+    "subject": "Anthropology",
+    "stars": 5,
+    "review": "Excellent instructor! Very knowledgeable and helpful."
+  },
+  {
+    "professor": "Abigail Lewis",
+    "subject": "Linguistics",
+    "stars": 4,
+    "review": "Good teacher, but lectures can be confusing."
+  },
+  {
+    "professor": "Jackson Brooks",
+    "subject": "Statistics",
+    "stars": 5,
+    "review": "Very clear and concise instructor."
+  },
+  {
+    "professor": "Isabella Walker",
+    "subject": "Business",
+    "stars": 4,
+    "review": "Good teacher, but assignments can be too long."
+  },
+  {
+    "professor": "Julian Sanchez",
+    "subject": "Environmental Science",
+    "stars": 5,
+    "review": "Excellent instructor! Very passionate and knowledgeable."
+  },
+  {
+    "professor": "Gabriella Rodriguez",
+    "subject": "Nursing",
+    "stars": 4,
+    "review": "Good teacher, but clinical sessions can be disorganized."
+  },
+  {
+    "professor": "Caleb Martin",
+    "subject": "Engineering",
+    "stars": 5,
+    "review": "Very challenging but rewarding instructor."
+  },
+  {
+    "professor": "Hannah Lee",
+    "subject": "Art History",
+    "stars": 4,
+    "review": "Good teacher, but lectures can be too long."
+  }
+]
