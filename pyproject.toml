@@ -29,6 +29,7 @@ google-auth-oauthlib = "^1.2.1"
 google-auth-httplib2 = "^0.2.0"
 google-api-python-client = "^2.142.0"
 langchain-google-community = "^1.0.8"
+pypdf2 = "^3.0.1"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md

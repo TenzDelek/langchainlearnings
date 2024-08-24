@@ -1,6 +1,5 @@
 import os
-import pickle
-from google_auth_oauthlib.flow import Flow
+import io
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
@@ -14,7 +13,9 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_community import GoogleDriveLoader
-
+from googleapiclient.http import MediaIoBaseDownload
+from langchain_community.document_loaders import TextLoader
+from langchain.schema import Document
 # Load environment variables from .env
 load_dotenv()
 
@@ -70,28 +71,55 @@ selected_file = files[file_index]
 # Define the file ID
 file_id = selected_file.get('id')
 print(file_id)
-# Load the file from Google Drive
-loader = GoogleDriveLoader(
-    service=drive_service,
-    folder_id=folder_id,
-    recursive=False,
-    token_path=os.path.join(os.path.dirname(__file__), "token.json")
-)
-documents = loader.load()
 
-# Split documents
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-splits = text_splitter.split_documents(documents)
+def download_file(file_id, service):
+    request = service.files().get_media(fileId=file_id)
+    fh = io.BytesIO()
+    downloader = MediaIoBaseDownload(fh, request)
+    done = False
+    while done is False:
+        status, done = downloader.next_chunk()
+    return fh.getvalue().decode('utf-8')
 
-# Create or load the vector store
 current_dir = os.path.dirname(os.path.abspath(__file__))
-persistent_directory = os.path.join(current_dir, "db", "langchaindemo")
+persistent_directory = os.path.join(current_dir, "db", "dtrydb")
 
-if os.path.exists(persistent_directory):
-    db = Chroma(persist_directory=persistent_directory, embedding_function=GoogleGenerativeAIEmbeddings(model="models/embedding-001"))
+if not os.path.exists(persistent_directory):
+    print("Persistent directory does not exist. Initializing vector store...")
+    try:
+        # Download the file content
+        file_content = download_file(file_id, drive_service)
+        
+        # Create a Document object
+        document = Document(page_content=file_content, metadata={"source": f"google_drive:{file_id}"})
+        
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        splits = text_splitter.split_documents([document])
+        print("\n--- Document Chunks Information ---")
+        print(f"Number of document chunks: {len(splits)}")
+        if splits:
+            print(f"Sample chunk:\n{splits[0].page_content[:200]}...\n")
+        else:
+            print("No chunks were created. The document might be empty.")
+            exit(1)
+
+        print("\n--- Creating embeddings ---")
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        print("\n--- Finished creating embeddings ---")
+
+        print("\n--- Creating vector store ---")
+        db = Chroma.from_documents(splits, embeddings, persist_directory=persistent_directory)
+        print("\n--- Finished creating vector store ---")
+    except Exception as e:
+        print(f"Error processing document: {e}")
+        print("File content (first 200 characters):")
+        print(file_content[:200])
+        exit(1)
 else:
-    db = Chroma.from_documents(splits, GoogleGenerativeAIEmbeddings(model="models/embedding-001"), persist_directory=persistent_directory)
-    db.persist()
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    db = Chroma(persist_directory=persistent_directory,
+            embedding_function=embeddings)
+    print("Vector store already exists. No need to initialize.")
 
 # Create a retriever for querying the vector store
 retriever = db.as_retriever(
@@ -124,7 +152,6 @@ history_aware_retriever = create_history_aware_retriever(
     llm, retriever, contextualize_q_prompt
 )
 
-# Answer question prompt
 # Answer question prompt
 qa_system_prompt = (
     "You are an assistant for question-answering tasks. Use "
@@ -159,7 +186,7 @@ def continual_chat():
         result = rag_chain.invoke({"input": query, "chat_history": chat_history})
         print(f"AI: {result['answer']}")
         chat_history.append(HumanMessage(content=query))
-        chat_history.append(AIMessage(content=result["answer"]))  # Use AIMessage instead of SystemMessage
+        chat_history.append(AIMessage(content=result["answer"]))
 
 # Main function to start the continual chat
 if __name__ == "__main__":
